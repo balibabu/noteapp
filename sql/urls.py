@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import ExecuteSQL
+from . import views
 
 urlpatterns = [
-    path('sql/', ExecuteSQL.as_view(), name='execute_sql'),
+    path('sql/', views.execute_sql, name='execute_sql'),
 ]
