@@ -29,34 +29,39 @@ def perform_sql_command(command):
         return result
     
 def perform_sqliteDictDB(query):
-    prefix=query.get('prefix')
+    sqlDict.set_file('constant')
     action=query.get('action')
-    data=query.get('data')
-    table=data.get('table')
-    sqlDict.set_file(prefix)
-    sqlDict.set_table_name(table)
+    prefix=query.get('prefix',"")
+
+    if action=='get_table_names':
+        tables=sqlDict.get_table_names()
+        return [table_name for table_name in tables if table_name.startswith(prefix)]
     
-    if action=='insert':
-        key=data.get('key')
-        value=data.get('value')
-        sqlDict.override(key,value)
-    elif action=='read':
-        key=data.get('key')
-        return sqlDict.read(key)
-    elif action=='has':
-        key=data.get('key')
-        return sqlDict.has(key)
-    elif action=='get_table_names':
-        return sqlDict.get_table_names()
-    elif action=='get_keys':
+    data=query.get('data')
+    table=prefix+data.get('table')
+    sqlDict.set_table_name(table)
+
+    if action=='get_keys':
         return sqlDict.get_keys()
-    elif action=='get_content_as_dict':
+    if action=='get_content_as_dict':
         return sqlDict.get_content_as_dict()
-    elif action=='delete':
-        key=data.get('key')
-        sqlDict.delete(key)
-    elif action=='deleteTable':
+    if action=='deleteTable':
         sqlDict.deleteTable(table)
-    else:
-        return '''actions you can perform: read,has,get_table_names,get_keys,get_content_as_dict,delete,deleteTable'''
-    return 'done'
+    
+    key=data.get('key')
+
+    if action=='read':
+        return sqlDict.read(key)
+    if action=='has':
+        return sqlDict.has(key)
+    if action=='delete':
+        sqlDict.delete(key)
+        return 'deleted successfully'
+    
+    value=data.get('value')
+
+    if action=='override':
+        sqlDict.override(key,value)
+        return 'data inserted successfully'
+    
+    return '''actions you can perform: read,has,get_table_names,get_keys,get_content_as_dict,delete,deleteTable'''
