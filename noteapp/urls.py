@@ -16,7 +16,7 @@ def api_overview(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('user/', include('user_auth.urls')),
     path('api/', include('notes.urls')),
-    path('api/', include('sql.urls')),
     path('',api_overview, name='api-overview')
 ]
